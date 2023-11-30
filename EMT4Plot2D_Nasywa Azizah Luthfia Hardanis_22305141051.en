@@ -1,0 +1,1628 @@
+﻿% Nama: Nasywa Azizah Luthfia Hardanis
+%% NIM: 22305141051
+%% Kelas: Matematika B
+%% ---
+%% * Menggambar Grafik 2D dengan EMT
+% 
+% Notebook ini menjelaskan tentang cara menggambar berbagai kurva dan
+% grafik 2D dengan software EMT. EMT menyediakan fungsi plot2d() untuk
+% menggambar berbagai kurva dan grafik dua dimensi (2D).
+% 
+% ** Plot Dasar
+% 
+% Terdapat fungsi plot yang sangat mendasar. Ada koordinat layar, yang
+% selalu berkisar dari 0 hingga 1024 di setiap sumbu, tidak peduli
+% apakah layarnya persegi atau bukan. Terdapat koordinat plot, yang
+% dapat diatur dengan setplot(). Pemetaan antara koordinat tergantung
+% pada jendela plot saat ini. Sebagai contoh, default shrinkwindow()
+% menyisakan ruang untuk label sumbu dan judul plot.
+% 
+% Dalam contoh, kita hanya menggambar beberapa garis acak dalam berbagai
+% warna. Untuk detail mengenai fungsi-fungsi ini, pelajari fungsi inti
+% EMT.
+>clg; // membersihkan layar
+>window(0,0,1024,1024); // menggunakan semua jendela
+>setplot(0,1,0,1); // menggunakan koordinat plot
+>hold on; // mulai mode timpa
+>n=100; X=random(n,2); Y=random(n,2);  //mendapatkan poin yang acak
+>colors=rgb(random(n),random(n),random(n)); // mendapatkan warna random
+>loop 1 to n; color(colors[#]); plot(X[#],Y[#]); end; // plot
+>hold off; // akhiri mode timpa
+>insimg; // insert ke notebook
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-001.png
+>reset;
+% Anda harus menahan grafik, karena perintah plot() akan menghapus
+% jendela plot.
+% 
+% Untuk menghapus semua yang sudah kita lakukan, kita menggunakan
+% reset().
+% 
+% Untuk menampilkan gambar hasil plot di layar notebook, perintah
+% plot2d() dapat diakhiri dengan titik dua (:). Cara lain adalah
+% perintah plot2d() diakhiri dengan titik koma (;), kemudian gunakan
+% perintah insimg() untuk menampilkan gambar hasil plot.
+% 
+% Sebagai contoh lain, kita menggambar plot sebagai inset dalam plot
+% lain. Hal ini dilakukan dengan mendefinisikan jendela plot yang lebih
+% kecil. Perhatikan bahwa jendela ini tidak menyediakan ruang untuk
+% label sumbu di luar jendela plot. Kita harus menambahkan beberapa
+% margin untuk hal ini sesuai kebutuhan. Perhatikan bahwa kita menyimpan
+% dan mengembalikan jendela penuh, dan menahan plot saat ini ketika kita
+% membuat inset.
+>plot2d("x^3-x");
+>xw=200; yw=100; ww=300; hw=300;
+>ow=window();
+>window(xw,yw,xw+ww,yw+hw);
+>hold on;
+>barclear(xw-50,yw-10,ww+60,ww+60);
+>plot2d("x^4-x",grid=6):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-002.png
+>
+>hold off;
+>window(ow);
+% Plot dengan beberapa angka dicapai dengan cara yang sama. Ada fungsi
+% utility figure() untuk ini.
+% 
+% ** Aspek Plot
+% 
+% Plot default menggunakan jendela plot persegi. Anda dapat mengubahnya
+% dengan fungsi aspect(). Jangan lupa untuk mengatur ulang aspeknya
+% nanti. Anda juga dapat mengubah default ini di menu dengan "Set
+% Aspect" ke rasio aspek tertentu atau ke ukuran jendela grafis saat
+% ini. 
+% 
+% Tetapi Anda juga dapat mengubahnya untuk satu plot. Untuk melakukan
+% ini, ukuran area plot saat ini diubah, dan jendela diatur sedemikian
+% rupa sehingga label memiliki ruang yang cukup.
+>aspect(2); // rasio panjang dan lebar 2:1
+>plot2d(["sin(x)","cos(x)"],0,2pi):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-003.png
+>aspect();
+>reset;
+% Fungsi reset() memulihkan default plot, termasuk rasio aspek.
+%% ---
+%% ** Contoh Soal
+%% Buatlah grafik fungsi 2sin(2x) dan fungsi cos(3x) dengan 0<x<2pi dan
+% rasio 3:2
+%% Penyelesaian:
+>reset();
+>aspect(3/2); // menyeting rasio 3:2
+>plot2d("sinc(3*x)",0,2pi,grid=4,<ticks); ...
+>ygrid(-2:0.5:2,grid=4); ...
+>xgrid([0:2]*pi,<ticks,grid=4);  ...
+>xtick([0,pi,2pi],["0","\pi","2\pi"],>latex):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-004.png
+% Gunakan xgrid() dan xtick() untuk mengubah rentang x dalam bentuk pi.
+>
+% 
+% * Plot 2D di Euler
+% 
+% EMT Math Toolbox memiliki plot dalam bentuk 2D, baik untuk data maupun
+% fungsi. EMT menggunakan fungsi plot2d. Fungsi ini dapat memplot fungsi
+% dan data.
+% 
+% Hal ini memungkinkan untuk memplot di Maxima menggunakan Gnuplot atau
+% di Python menggunakan Math Plot Lib.
+% 
+% Euler dapat memplot plot 2D dari
+% 
+% - ekspresi
+%% - fungsi, variabel, atau kurva yang diparameterkan,
+%% - vektor nilai x-y,
+%% - awan titik-titik di dalam pesawat,
+%% - kurva implisit dengan level atau wilayah level.
+%% - fungsi kompleks
+% 
+% Gaya plot mencakup berbagai gaya untuk garis dan titik, plot batang
+% dan plot berbayang.
+%% * Plot Ekspresi atau Variabel
+% 
+% Ekspresi tunggal dalam "x" (misalnya "4*x^2") atau nama fungsi
+% (misalnya "f") menghasilkan grafik fungsi.
+% 
+% Berikut ini adalah contoh paling dasar, yang menggunakan rentang
+% default dan menetapkan rentang y yang tepat agar sesuai dengan plot
+% fungsi.
+% 
+% Catatan: Jika Anda mengakhiri baris perintah dengan tanda titik dua
+% ":", plot akan disisipkan ke dalam jendela teks. Jika tidak, tekan TAB
+% untuk melihat plot jika jendela plot tertutup.
+>plot2d("x^2"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-005.png
+>aspect(1.5); plot2d("x^3-x"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-006.png
+>a:=5.6; plot2d("exp(-a*x^2)/a"); insimg(30); // menampilkan gambar hasil plot setinggi 25 baris
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-007.png
+% Dari beberapa contoh sebelumnya Anda dapat melihat bahwa aslinya
+% gambar plot menggunakan sumbu X dengan rentang nilai dari -2 sampai
+% dengan 2. Untuk mengubah rentang nilai X dan Y, Anda dapat menambahkan
+% nilai-nilai batas X (dan Y) di belakang ekspresi yang digambar.
+% 
+% Rentang plot ditetapkan dengan parameter yang ditetapkan berikut ini
+% 
+% - a,b: rentang-x (default -2,2)
+%% - c, d: rentang y (default: skala dengan nilai)
+%% - r: sebagai alternatif, radius di sekitar pusat plot
+%% - cx, cy: koordinat pusat plot (default 0,0)
+>plot2d("x^3-x",-1,2):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-008.png
+>plot2d("sin(x)",-2*pi,2*pi): // plot sin(x) pada interval [-2pi, 2pi]
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-009.png
+>plot2d("cos(x)","sin(3*x)",xmin=0,xmax=2pi):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-010.png
+% Alternatif untuk tanda titik dua adalah perintah insimg(lines), yang
+% menyisipkan plot yang menempati sejumlah baris teks tertentu.
+% 
+% Dalam opsi, plot dapat diatur untuk muncul
+% 
+% - dalam jendela terpisah yang dapat diubah ukurannya,
+%% - di jendela notebook.
+% 
+% Untuk style lainnya dapat dicapai dengan perintah plot tertentu.
+% 
+% Dalam hal apa pun, tekan tombol tabulator untuk melihat plot, jika
+% disembunyikan.
+% 
+% Untuk membagi jendela menjadi beberapa plot, gunakan perintah
+% figure(). Pada contoh, kita memplot x^1 hingga x^4 menjadi 4 bagian
+% jendela. Gunakan figure(0) untuk mengatur ulang jendela default.
+>reset;
+>figure(2,2); ...
+>for n=1 to 4; figure(n); plot2d("x^"+n); end; ...
+>figure(0):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-011.png
+% Pada plot2d(), terdapat beberapa gaya alternatif yang tersedia dengan
+% grid=x. Sebagai gambaran umum, kami menampilkan berbagai gaya grid
+% dalam satu gambar (lihat di bawah ini untuk perintah figure()). Gaya
+% grid=0 tidak disertakan. Gaya ini tidak menampilkan grid dan frame.
+>figure(3,3); ...
+>for k=1:9; figure(k); plot2d("x^3-x",-2,1,grid=k); end; ...
+>figure(0):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-012.png
+% Jika argumen untuk plot2d() adalah sebuah ekspresi yang diikuti oleh
+% empat angka, angka-angka ini adalah rentang x dan y untuk plot.
+% 
+% Sebagai alternatif, a, b, c, d dapat ditetapkan sebagai parameter yang
+% ditetapkan sebagai a=... dst.
+% 
+% Pada contoh berikut, kita mengubah gaya kisi, menambahkan label, dan
+% menggunakan label vertikal untuk sumbu y.
+>aspect(1.5); plot2d("sin(x)",0,2pi,-1.2,1.2,grid=3,xl="x",yl="sin(x)"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-013.png
+>plot2d("sin(x)+cos(2*x)",0,4pi):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-014.png
+% Gambar yang dihasilkan dengan menyisipkan plot ke dalam jendela teks
+% disimpan di direktori yang sama dengan notebook, secara default dalam
+% subdirektori bernama "images". Gambar-gambar tersebut juga digunakan
+% oleh ekspor HTML.
+% 
+% Anda cukup menandai gambar apa pun dan menyalinnya ke clipboard dengan
+% Ctrl-C. Tentu, Anda juga dapat mengekspor grafik saat ini dengan
+% fungsi-fungsi dalam menu File. 
+% 
+% Fungsi atau ekspresi dalam plot2d dievaluasi secara adaptif. Untuk
+% kecepatan yang lebih tinggi, matikan plot adaptif dengan <adaptive dan
+% tentukan jumlah subinterval dengan n=... Hal ini hanya diperlukan pada
+% kasuskasus yang jarang terjadi.
+>plot2d("sign(x)*exp(-x^2)",-1,1,<adaptive,n=10000):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-015.png
+>plot2d("x^x",r=1.2,cx=1,cy=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-016.png
+% Perhatikan bahwa x^x tidak didefinisikan untuk x<=0. Fungsi plot2d
+% menangkap kesalahan ini, dan mulai memplot segera setelah fungsi
+% didefinisikan. Hal ini berlaku untuk semua fungsi yang mengembalikan
+% NAN di luar jangkauan definisinya.
+>plot2d("log(x)",-0.1,2):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-017.png
+% Parameter square=true (atau >square) memilih rentang y secara otomatis
+% sehingga hasilnya adalah jendela plot persegi. Perhatikan bahwa secara
+% default, Euler menggunakan ruang persegi di dalam jendela plot.
+>plot2d("x^3-x",>square):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-018.png
+>plot2d(''integrate("sin(x)*exp(-x^2)",0,x)'',0,2): // plot integral
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-019.png
+% Jika Anda membutuhkan lebih banyak ruang untuk label-y, panggil
+% shrinkwindow() dengan parameter lebih kecil, atau tetapkan nilai
+% positif untuk "smaller" pada plot2d().
+>plot2d("gamma(x)",1,10,yl="y-values",smaller=6,<vertical):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-020.png
+% Ekspresi simbolik juga dapat digunakan, karena disimpan sebagai
+% ekspresi string sederhana.
+>x=linspace(0,2pi,1000); plot2d(sin(5x),cos(7x)):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-021.png
+>a:=5.6; expr &= exp(-a*x^2)/a; // define expression
+>plot2d(expr,-2,2): // plot from -2 to 2
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-022.png
+>plot2d(expr,r=1,thickness=2): // plot in a square around (0,0)
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-023.png
+>plot2d(&diff(expr,x),>add,style="--",color=red): // add another plot
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-024.png
+>plot2d(&diff(expr,x,2),a=-2,b=2,c=-2,d=1): // plot in rectangle
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-025.png
+>plot2d(&diff(expr,x),a=-2,b=2,>square): // keep plot square
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-026.png
+>plot2d("x^2",0,1,steps=1,color=red,n=10):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-027.png
+>plot2d("x^2",>add,steps=2,color=blue,n=10):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-028.png
+% ---
+%% ** Contoh Soal
+%% Tentukan asimtot dari fungsi rasional berikut
+%% latex: \frac{3x+4}{x+2}
+%% Penyelesaian:
+>reset();
+>plot2d("(3*x+4)/(x+2)",-2,2); insimg(20)
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-029.png
+% Menghitung asimtot datar:
+% 
+% Untuk fungsi rasional
+%% latex: f(x)= \frac{ax^n+bx^{n-1}+cx^{n-2}+...+k}{px^m+qx^{m-1}+rx^{m-2}+...+z}
+% 
+% 1. Jika n<m, maka asimtot datarnya adalah y=0
+%% 2. Jika n=m, maka aimtot datarnya adalah y=a/p
+%% 3. Jika n>m, maka asimtotnya berupa asimtot miring atau asimtot kurva.
+% 
+% latex: \frac{3x+4}{x+2}
+%% Karena n=m, maka asimtot datarnya adalah 3
+% 
+% Menghitung asimtot tegak:
+%% latex: \frac{3x+4}{x+2}
+% 
+% Ambil penyebutnya menjadi
+%% latex: x+2=0
+%% latex: x=-2
+% 
+% Maka asimtot tegaknya adalah -2
+>reset();
+>
+% * Fungsi dalam satu Parameter
+% 
+% Fungsi plot yang paling penting untuk plot planar adalah plot2d().
+% Fungsi ini diimplementasikan dalam bahasa Euler dalam file "plot.e",
+% yang dimuat pada awal program.
+% 
+% Berikut adalah beberapa contoh penggunaan fungsi. Seperti biasa dalam
+% EMT, fungsi yang bekerja untuk fungsi atau eksekusi lain, Anda dapat
+% mengoper parameter tambahan (selain x) yang bukan variabel global ke
+% fungsi dengan parameter titik koma atau dengan koleksi panggilan.
+>function f(x,a) := x^2/a+a*x^2-x; // mendefinisikan fungsi
+>a=0.3; plot2d("f",0,1;a): // plot dengan a=0.3
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-030.png
+>plot2d("f",0,1;0.4): // plot dengan a=0.4
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-031.png
+>plot2d({{"f",0.2}},0,1): // plot dengan a=0.2
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-032.png
+>plot2d({{"f(x,b)",b=0.1}},0,1): // plot dengan 0.1
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-033.png
+>function f(x) := x^3-x; ...
+>plot2d("f",r=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-034.png
+% Berikut ini adalah ringkasan dari fungsi yang diterima
+% 
+% - ekspresi atau ekspresi simbolik dalam x
+%% - fungsi atau fungsi simbolis dengan nama sebagai "f"
+%% - fungsi simbolik hanya dengan nama f
+% 
+% Fungsi plot2d() juga menerima fungsi simbolik. Untuk fungsi simbolik,
+% nama saja sudah cukup.
+>function f(x) &= diff(x^x,x)
+
+                            x
+                           x  (log(x) + 1)
+
+>plot2d(f,0,2):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-035.png
+% Tentu saja, untuk ekspresi atau ekspresi simbolik, nama variabel sudah
+% cukup untuk memplotnya.
+>expr &= sin(x)*exp(-x)
+
+                              - x
+                             E    sin(x)
+
+>plot2d(expr,0,3pi):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-036.png
+>function f(x) &= x^x;
+>plot2d(f,r=1,cx=1,cy=1,color=blue,thickness=2);
+>plot2d(&diff(f(x),x),>add,color=red,style="-.-"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-037.png
+% 
+% Untuk style garis, terdapat berbagai opsi.
+%% - style = "...". Pilih dari "-", "-", "-.", ".", ".-.", "-.-".
+%% - color: Lihat di bawah untuk warna.
+%% - thickness: Untuk ketebalan, standarnya adalah 1.
+% 
+% Warna dapat dipilih sebagai salah satu warna default, atau sebagai
+% warna RGB.
+% 
+% - 0..15: indeks warna default.
+%% - konstanta warna: white, black, red, green, blue, cyan, olive,
+% lightgray, gray, darkgray, orange, lightgreen, turquoise, lightblue,
+% lightorange, yellow
+%% - rgb (red,green,blue): parameter dalam bentuk real dalam [0,1].
+>plot2d("exp(-x^2)",r=2,color=red,thickness=3,style="--"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-038.png
+% Berikut ini adalah tampilan warna EMT yang sudah ditetapkan
+% sebelumnya.
+>aspect(2); columnsplot(ones(1,16),lab=0:15,grid=0,color=0:15):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-039.png
+% Tetapi, Anda bisa menggunakan warna apa pun.
+>columnsplot(ones(1,16),grid=0,color=rgb(0,0,linspace(0,1,15))):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-040.png
+% ---
+%% ** Contoh Soal
+%% Buatlah grafik fungsi f(x) dibawah ini beserta turunannya dalam satu
+% plot.
+%% latex: f(x)= 2x^3-x^2+1
+%% Penyelesaian:
+% 
+>reset();
+>function f(x) &= 2*x^3-x^2-1
+
+                               3    2
+                            2 x  - x  - 1
+
+>plot2d(&f(x),color=cyan,thickness=2); // grafik fungsi f(x)
+>plot2d(&diff(f(x),x),>add,color=orange,style="--",thickness=2): // menambahkan grafik fungsi turunan f(x)
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-041.png
+% Pertama membuat grafik f(x) terlebih dahulu, kemudian buat grafik
+% turunan f(x) dengan menambahkan "&diff.." sebelum menuliskan fungsi
+% f(x) lalu tanda koma x ",x" karena diturunkan terhadap x, diakhiri
+% dengan tutup kurung. Untuk menambahkan grafik turunan f(x) agar berada
+% di plot koordinat yang sama dengan fungsi f(x), tuliskan >add.
+>
+% 
+% * Menggambar Beberapa Kurva pada bidang koordinat yang sama
+% 
+% Memplot lebih dari satu fungsi (multiple functions) ke dalam satu
+% jendela dapat dilakukan dengan berbagai cara. Salah satu caranya
+% adalah dengan menggunakan >add untuk beberapa pemanggilan ke plot2d
+% secara bersamaan, kecuali pemanggilan pertama. Kita telah menggunakan
+% fitur ini pada contoh di atas.
+>aspect(); plot2d("cos(x)",r=2,grid=6); plot2d("x",style=".",>add):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-042.png
+>aspect(1.5); plot2d("sin(x)",0,2pi); plot2d("cos(x)",color=blue,style="--",>add):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-043.png
+% Salah satu kegunaan >add adalah untuk menambahkan titik pada kurva.
+>plot2d("sin(x)",0,pi); plot2d(2,sin(2),>points,>add):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-044.png
+% Kami menambahkan titik perpotongan dengan label (pada posisi "cl"
+% untuk kiri tengah), dan menyisipkan hasilnya ke dalam notebook. Kami
+% juga menambahkan judul ke plot.
+>plot2d(["cos(x)","x"],r=1.1,cx=0.5,cy=0.5, ...
+>  color=[black,blue],style=["-","."], ...
+>  grid=1);
+>x0=solve("cos(x)-x",1);  ...
+>  plot2d(x0,x0,>points,>add,title="Intersection Demo");  ...
+>  label("cos(x) = x",x0,x0,pos="cl",offset=20):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-045.png
+% Dalam demo berikut ini, kami memplot fungsi sinc(x)=sin(x)/x dan
+% ekspansi Taylor ke-8 dan ke-16. Kami menghitung ekspansi ini
+% menggunakan Maxima melalui ekspresi simbolik.
+% 
+% Plot ini dilakukan dalam perintah multi-baris berikut ini dengan tiga
+% kali pemanggilan plot2d(). Pemanggilan kedua dan ketiga memiliki set
+% flag >add, yang membuat plot menggunakan rentang sebelumnya.
+% 
+% Kami menambahkan kotak label yang menjelaskan fungsinya.
+>$taylor(sin(x)/x,x,0,4)
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-046.png
+% // latex: \frac{x^4}{120}-\frac{x^2}{6}+1
+>plot2d("sinc(x)",0,4pi,color=green,thickness=2); ...
+>  plot2d(&taylor(sin(x)/x,x,0,8),>add,color=blue,style="--"); ...
+>  plot2d(&taylor(sin(x)/x,x,0,16),>add,color=red,style="-.-"); ...
+>  labelbox(["sinc","T8","T16"],styles=["-","--","-.-"], ...
+>    colors=[black,blue,red]):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-047.png
+% Pada contoh berikut, kami menghasilkan Polinomial Bernstein.
+% 
+% latex: B_i(x) = \binom{n}{i} x^i (1-x)^{n-i}
+>plot2d("(1-x)^10",0,1); // plot fungsi pertama
+>for i=1 to 10; plot2d("bin(10,i)*x^i*(1-x)^(10-i)",>add); end;
+>insimg;
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-048.png
+% Metode kedua adalah menggunakan sepasang matriks nilai x dan matriks
+% nilai y dengan ukuran yang sama.
+% 
+% Kita membuat sebuah matriks nilai dengan satu Bernstein-Polynomial di
+% setiap baris. Untuk ini, kita cukup menggunakan vektor kolom i.
+% Lihatlah pengantar tentang bahasa matriks untuk mempelajari lebih
+% lanjut.
+>x=linspace(0,1,500);
+>n=10; k=(0:n)'; // n adalah vektor baris, k adalah vektor kolom
+>y=bin(n,k)*x^k*(1-x)^(n-k); // y adalah matriks, maka
+>plot2d(x,y):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-049.png
+% Perhatikan bahwa parameter warna dapat berupa vektor. Kemudian setiap
+% warna digunakan untuk setiap baris matriks.
+>x=linspace(0,1,200); y=x^(1:10)'; plot2d(x,y,color=1:10):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-050.png
+% Metode lainnya adalah menggunakan vektor ekspresi (string). Anda
+% kemudian dapat menggunakan larik warna, larik gaya, dan larik
+% ketebalan dengan panjang yang sama.
+>plot2d(["sin(x)","cos(x)"],0,2pi,color=4:5): 
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-051.png
+>plot2d(["sin(x)","cos(x)"],0,2pi): // plot vektor ekspresi
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-052.png
+% Kita bisa mendapatkan vektor seperti itu dari Maxima dengan
+% menggunakan makelist() dan mxm2str().
+>v &= makelist(binomial(10,i)*x^i*(1-x)^(10-i),i,0,10) // membuat daftar
+
+               10            9              8  2             7  3
+       [(1 - x)  , 10 (1 - x)  x, 45 (1 - x)  x , 120 (1 - x)  x , 
+           6  4             5  5             4  6             3  7
+210 (1 - x)  x , 252 (1 - x)  x , 210 (1 - x)  x , 120 (1 - x)  x , 
+          2  8              9   10
+45 (1 - x)  x , 10 (1 - x) x , x  ]
+
+>mxm2str(v) // mendapatkan vektor string dari vektor simbolik
+(1-x)^10
+10*(1-x)^9*x
+45*(1-x)^8*x^2
+120*(1-x)^7*x^3
+210*(1-x)^6*x^4
+252*(1-x)^5*x^5
+210*(1-x)^4*x^6
+120*(1-x)^3*x^7
+45*(1-x)^2*x^8
+10*(1-x)*x^9
+x^10
+>plot2d(mxm2str(v),0,1): // fungsi plot
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-053.png
+% Alternatif lain adalah dengan menggunakan bahasa matriks Euler.
+% 
+% Jika sebuah ekspresi menghasilkan matriks fungsi, dengan satu fungsi
+% di setiap baris, semua fungsi ini akan diplot ke dalam satu plot.
+% 
+% Untuk ini, gunakan vektor parameter dalam bentuk vektor kolom. Jika
+% sebuah larik warna ditambahkan, maka akan digunakan untuk setiap baris
+% plot.
+>n=(1:10)'; plot2d("x^n",0,1,color=1:10):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-054.png
+% Ekspresi dan fungsi satu baris dapat melihat variabel global.
+% 
+% Jika Anda tidak dapat menggunakan variabel global, Anda perlu
+% menggunakan fungsi dengan parameter tambahan, dan mengoper parameter
+% ini sebagai parameter titik koma.
+% 
+% Berhati-hatilah untuk meletakkan semua parameter yang ditetapkan di
+% akhir perintah plot2d. Pada contoh, kita memberikan a=5 ke fungsi f,
+% yang kita plot dari -10 ke 10.
+>function f(x,a) := 1/a*exp(-x^2/a); ...
+>plot2d("f",-10,10;5,thickness=2,title="a=5"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-055.png
+% Sebagai alternatif, gunakan koleksi dengan nama fungsi dan semua
+% parameter tambahan. Daftar khusus ini disebut koleksi panggilan, dan
+% itu adalah cara yang lebih disukai untuk meneruskan argumen ke fungsi
+% yang dengan sendirinya diteruskan sebagai argumen ke fungsi lain.
+% 
+% Pada contoh berikut ini, kita menggunakan loop untuk memplot beberapa
+% fungsi (lihat tutorial tentang pemrograman untuk loop).
+>plot2d({{"f",1}},-10,10); ...
+>for a=2:10; plot2d({{"f",a}},>add); end:
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-056.png
+% Kita dapat mencapai hasil yang sama dengan cara berikut menggunakan
+% bahasa matriks EMT. Setiap baris dari matriks f(x,a) adalah satu
+% fungsi. Selain itu, kita dapat mengatur warna untuk setiap baris
+% matriks. Klik dua kali pada fungsi getspectral() untuk penjelasannya.
+>x=-10:0.01:10; a=(1:10)'; plot2d(x,f(x,a),color=getspectral(a/10)):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-057.png
+% ---
+%% ** Contoh Soal
+%% Gambarlah grafik kedua fungsi berikut dan tentukan titik potong kedua
+% grafik.
+%% latex: f(x)=\frac{x^3-9x^2+2}{3}, 0 \leq x \leq 10
+%% latex: g(x)= \frac{5}{3}x + \frac{2}{3}, 0 \leq x \leq 10
+%% Penyelesaian:
+>reset();
+>function f(x) &= (x^3-9*x^2+2)/3 // mendefinisikan fungsi f(x)
+
+                             3      2
+                            x  - 9 x  + 2
+                            -------------
+                                  3
+
+>function g(x) &= 5/3*x+2/3 // mendefinisikan fungsi g(x)
+
+                               5 x   2
+                               --- + -
+                                3    3
+
+>plot2d([&f(x),&g(x)],-1,10,color=[green,orange]):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-058.png
+% Dari grafik di atas, grafik fungsi f(x) dan g(x) dapat dibuat
+% sekaligus dalam satu plot dengan menggunakan kurung siku [] setelah
+% perintah plot2d dan kedua fungsi dipisahkan oleh koma. Begitu juga
+% dengan pewarnaan kedua grafik.
+% 
+% Terlihat bahwa ada perpotongan di titik x=0 dan di sekitar titik
+% x=9.5. Untuk lebih tepatnya, kita dapat menghitung titik perpotongan
+% tersebut.
+% 
+% - Mencari titik potong pertama
+>x1=0;
+% Substitusi nilai x1 ke f(x) dan g(x)
+>f(x1), g(x1)
+0.666666666667
+0.666666666667
+% Karena hasilnya sama
+%% Maka titik potong pertama di titik (0, 0.667).
+% 
+% - Mencari titik potong kedua
+%% Mencari x2
+>x2=solve("f(x)-g(x)",10)
+9.52493781056
+% Mencari y2 dengan substitusi x2 ke fungsi f(x) dan g(x)
+>g(x2), f(x2)
+16.5415630176
+16.5415630176
+% Karena hasilnya sama
+%% Maka titik potong pertama di titik (9.5249, 16.5415).
+% 
+% Jadi, titik potong fungsi f(x) dan g(x) tersebut dengan 0<x<10 adalah
+% (0, 0.667) dan (9,5249, 16.5416).
+>
+% ** Label Teks
+% 
+% Dekorasi sederhana dapat berupa
+% 
+% - judul dengan title = "..."
+%% - Label x dan y dengan xl="...", yl="..."
+%% - label teks lain dengan label("...",x,y)
+% 
+% Perintah label akan memplot ke dalam plot saat ini pada koordinat plot
+% (x,y). Perintah ini dapat menerima argumen posisi.
+>plot2d("x^3-x",-1,2,title="y=x^3-x",yl="y",xl="x"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-059.png
+>expr := "log(x)/x"; ...
+>  plot2d(expr,0.5,5,title="y="+expr,xl="x",yl="y"); ...
+>  label("(1,0)",1,0); label("Max",E,expr(E),pos="lc"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-060.png
+% Ada juga fungsi labelbox(), yang dapat menampilkan fungsi dan teks.
+% Fungsi ini membutuhkan vektor string dan warna, satu item untuk setiap
+% fungsi.
+>function f(x) &= x^2*exp(-x^2);  ...
+>plot2d(&f(x),a=-3,b=3,c=-1,d=1);  ...
+>plot2d(&diff(f(x),x),>add,color=blue,style="--"); ...
+>labelbox(["function","derivative"],styles=["-","--"], ...
+>   colors=[black,blue],w=0.4):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-061.png
+% Kotak tersebut terletak di kanan atas secara default, tetapi
+% menggunakan >left akan menambatkannya di kiri atas. Anda dapat
+% memindahkannya ke tempat mana pun yang Anda suka. Posisi jangkar
+% adalah sudut kanan atas kotak, dan angkanya adalah pecahan dari ukuran
+% jendela grafik. Lebarnya adalah otomatis.
+% 
+% Untuk plot titik, kotak label juga dapat digunakan. Tambahkan sebuah
+% parameter >points, atau sebuah vektor bendera, satu  untuk setiap
+% label.
+% 
+% Pada contoh berikut ini, hanya ada satu fungsi. Jadi kita dapat
+% menggunakan string dan bukan vektor string. Kami mengatur warna teks
+% menjadi hitam untuk contoh ini.
+>n=10; plot2d(0:n,bin(n,0:n),>addpoints); ...
+>labelbox("Binomials",styles="[]",>points,x=0.1,y=0.1, ...
+>tcolor=black,>left):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-062.png
+% Gaya plot ini juga tersedia di statplot(). Seperti pada plot2d() warna
+% dapat diatur untuk setiap baris plot. Terdapat lebih banyak plot
+% khusus untuk keperluan statistik (lihat tutorial tentang statistik).
+>statplot(1:10,random(2,10),color=[red,blue]):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-063.png
+% Fitur yang serupa adalah fungsi textbox().
+% 
+% Lebarnya secara default adalah lebar maksimal baris teks. Tetapi, ini
+% juga dapat diatur oleh pengguna.
+%% eperluan statistik (lihat tutorial tentang statistik).
+>function f(x) &= exp(-x)*sin(2*pi*x); ...
+>plot2d("f(x)",0,2pi); ...
+>textbox(latex("\text{Example of a damped oscillation}\ f(x)=e^{-x}sin(2\pi x)"),w=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-064.png
+% Label teks, judul, kotak label, dan teks lainnya dapat berisi string
+% Unicode (lihat sintaks EMT untuk mengetahui lebih lanjut tentang
+% string Unicode).
+>plot2d("x^3-x",title=u"x &rarr; x&sup3; - x"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-065.png
+% Label pada sumbu x dan y bisa vertikal.
+>plot2d("sinc(x)",0,2pi,xl="x",yl=u"x &rarr; sinc(x)",>vertical):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-066.png
+% 
+% ** LaTeX
+% 
+% Anda juga dapat memplot formula LaTeX jika Anda telah menginstal
+% sistem LaTeX. Saya merekomendasikan MiKTeX. Jalur ke binari "lateks"
+% dan "dvipng" harus berada di jalur sistem, atau Anda harus mengatur
+% LaTeX di menu opsi.
+% 
+% Perlu diperhatikan bahwa penguraian LaTeX berjalan lambat. Jika Anda
+% ingin menggunakan LaTeX dalam plot animasi, Anda harus memanggil
+% latex() sebelum perulangan sekali dan menggunakan hasilnya (gambar
+% dalam matriks RGB).
+% 
+% Pada plot berikut ini, kita menggunakan LaTeX untuk label x dan y,
+% sebuah label, sebuah kotak label, dan judul plot.
+>plot2d("exp(-x)*sin(x)/x",a=0,b=2pi,c=0,d=1,grid=6,color=blue, ...
+>  title=latex("\text{Function $\Phi$}"), ...
+>  xl=latex("\phi"),yl=latex("\Phi(\phi)")); ...
+>textbox( ...
+>  latex("\Phi(\phi) = e^{-\phi} \frac{\sin(\phi)}{\phi}"),x=0.8,y=0.5); ...
+>label(latex("\Phi",color=blue),1,0.4):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-067.png
+% Seringkali, kita menginginkan spasi dan label teks yang tidak sesuai
+% pada sumbu x. Kita dapat menggunakan xaxis() dan yaxis() seperti yang
+% akan kita tunjukkan nanti.
+% 
+% Cara termudah adalah dengan membuat plot kosong dengan sebuah frame
+% menggunakan grid=4, dan kemudian menambahkan grid dengan ygrid() dan
+% xgrid(). Pada contoh berikut, kita menggunakan tiga buah string LaTeX
+% untuk label pada sumbu x dengan xtick().
+>reset();
+>plot2d("sinc(x)",0,2pi,grid=4,<ticks); ...
+>ygrid(-2:0.5:2,grid=6); ...
+>xgrid([0:2]*pi,<ticks,grid=6);  ...
+>xtick([0,pi,2pi],["0","\pi","2\pi"],>latex):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-068.png
+% Tentu, fungsi juga dapat digunakan.
+>function map f(x) ...
+$if x>0 then return x^4
+$else return x^2
+$endif
+$endfunction
+% Parameter "map" membantu menggunakan fungsi untuk vektor. Untuk plot,
+% hal ini tidak diperlukan. Tetapi untuk menunjukkan bahwa vektorisasi
+% berguna, kami menambahkan beberapa titik kunci pada plot pada x =-1, x
+% = 0 dan x = 1.
+% 
+% Pada plot berikut, kita juga memasukkan beberapa kode LaTeX. Kami
+% menggunakannya untuk dua label dan sebuah kotak teks. Tentu saja, Anda
+% hanya dapat menggunakan LaTeX jika Anda telah menginstal LaTeX dengan
+% benar.
+>plot2d("f",-1,1,xl="x",yl="f(x)",grid=6);  ...
+>plot2d([-1,0,1],f([-1,0,1]),>points,>add); ...
+>label(latex("x^3"),0.72,f(0.72)); ...
+>label(latex("x^2"),-0.52,f(-0.52),pos="ll"); ...
+>textbox( ...
+>  latex("f(x)=\begin{cases} x^3 & x>0 \\ x^2 & x \le 0\end{cases}"), ...
+>  x=0.7,y=0.2):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-069.png
+% 
+% ** Interaksi Pengguna
+% 
+% Saat memplot sebuah fungsi atau ekspresi, parameter >user memungkinkan
+% pengguna untuk memperbesar dan menggeser plot dengan tombol kursor
+% atau mouse. Pengguna dapat
+% 
+% - zoom dengan + atau -
+%% - memindahkan plot dengan tombol kursor
+%% - pilih jendela plot dengan mouse
+%% - mengatur ulang tampilan dengan spasi
+%% - keluar dengan return
+% 
+% Tombol spasi akan mengatur ulang plot ke jendela plot asli.
+% 
+% Saat memplot data, bendera >user hanya akan menunggu tombol ditekan.
+>plot2d({{"x^3-a*x",a=1}},>user,title="Press any key!"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-070.png
+>plot2d("exp(x)*sin(x)",user=true, ...
+>  title="+/- or cursor keys (return to exit)"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-071.png
+% Berikut ini menunjukkan cara interaksi pengguna tingkat lanjut (lihat
+% tutorial mengenai pemrograman untuk detailnya).
+% 
+% Fungsi bawaan mousedrag() menunggu peristiwa mouse atau keyboard.
+% Fungsi ini melaporkan mouse ke bawah, mouse bergerak atau mouse ke
+% atas, dan penekanan tombol. Fungsi dragpoints() memanfaatkan hal ini,
+% dan mengizinkan pengguna untuk menyeret titik manapun di dalam plot.
+% 
+% Kita membutuhkan fungsi plot terlebih dahulu. Sebagai contoh, kita
+% melakukan interpolasi dalam 5 titik  dengan polinomial. Fungsi ini
+% harus memplot ke dalam area plot yang tetap.
+>function plotf(xp,yp,select) ...
+$  d=interp(xp,yp);
+$  plot2d("interpval(xp,d,x)";d,xp,r=2);
+$  plot2d(xp,yp,>points,>add);
+$  if select>0 then
+$    plot2d(xp[select],yp[select],color=red,>points,>add);
+$  endif;
+$  title("Drag one point, or press space or return!");
+$endfunction
+% Perhatikan parameter titik koma pada plot2d (d dan xp), yang
+% diteruskan ke evaluasi fungsi interp(). Tanpa ini, kita harus menulis
+% fungsi plotinterp() terlebih dahulu, untuk mengakses nilai secara
+% global.
+% 
+% Sekarang kita menghasilkan beberapa nilai acak, dan membiarkan
+% pengguna menyeret titik-titiknya.
+>t=-1:0.5:1; dragpoints("plotf",t,random(size(t))-0.5):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-072.png
+% Ada juga fungsi yang memplot fungsi lain tergantung pada vektor
+% parameter, dan memungkinkan pengguna menyesuaikan parameter ini.
+% 
+% Pertama, kita memerlukan fungsi plot.
+>function plotf([a,b]) := plot2d("exp(a*x)*cos(2pi*b*x)",0,2pi;a,b);
+% Kemudian kita membutuhkan nama untuk parameter, nilai awal dan matriks
+% rentang nx2, dan secara opsional, sebuah garis judul. Terdapat slider
+% interaktif, yang dapat mengatur nilai oleh pengguna. Fungsi
+% dragvalues() menyediakan ini.
+>dragvalues("plotf",["a","b"],[-1,2],[[-2,2];[1,10]], ...
+>  heading="Drag these values:",hcolor=black):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-073.png
+% Anda dapat membatasi nilai yang diseret menjadi bilangan bulat.
+% Sebagai contoh, kita menulis fungsi plot, yang memplot polinomial
+% Taylor dengan derajat n ke fungsi kosinus.
+>function plotf(n) ...
+$plot2d("cos(x)",0,2pi,>square,grid=6);
+$plot2d(&"taylor(cos(x),x,0,@n)",color=blue,>add);
+$textbox("Taylor polynomial of degree "+n,0.1,0.02,style="t",>left);
+$endfunction
+% Sekarang kita membiarkan derajat n bervariasi dari 0 sampai 20 dalam
+% 20 stop. Hasil dari dragvalues() digunakan untuk memplot sketsa dengan
+% n ini, dan untuk menyisipkan plot ke dalam notebook.
+>nd=dragvalues("plotf","degree",2,[0,20],20,y=0.8, ...
+>   heading="Drag the value:"); ...
+>plotf(nd):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-074.png
+% Berikut ini adalah peragaan sederhana dari fungsi ini. Pengguna dapat
+% menggambar di atas jendela plot, meninggalkan jejak titik.
+>function dragtest ...
+$  plot2d(none,r=1,title="Drag with the mouse, or press any key!");
+$  start=0;
+$  repeat
+$    {flag,m,time}=mousedrag();
+$    if flag==0 then return; endif;
+$    if flag==2 then
+$      hold on; mark(m[1],m[2]); hold off;
+$    endif;
+$  end
+$endfunction
+>dragtest // lihat hasilnya dan cobalah lakukan!
+% ** Gaya Plot 2D
+% 
+% Secara default, EMT menghitung strip sumbu otomatis dan menambahkan
+% label pada setiap strip. Hal ini dapat diubah dengan parameter
+% kisi-kisi. Gaya default sumbu dan label dapat dimodifikasi.
+% 
+% Selain itu, label dan judul dapat ditambahkan secara manual. Untuk
+% mengatur ulang ke gaya default, gunakan reset().
+>aspect();
+>figure(3,4); ...
+> figure(1); plot2d("x^3-x",grid=0); ... // tidak ada grid, bingkai atau sumbu
+> figure(2); plot2d("x^3-x",grid=1); ... // sumbu x dan y
+> figure(3); plot2d("x^3-x",grid=2); ... // default ticks
+> figure(4); plot2d("x^3-x",grid=3); ... // sumbu x-y dengan label di dalamnya
+> figure(5); plot2d("x^3-x",grid=4); ... // tidak ada tanda strip sumbu, hanya label
+> figure(6); plot2d("x^3-x",grid=5); ... // default, tetapi tidak ada margin
+> figure(7); plot2d("x^3-x",grid=6); ... // sumbu saja
+> figure(8); plot2d("x^3-x",grid=7); ... // sumbu saja, tanda strip pada sumbu
+> figure(9); plot2d("x^3-x",grid=8); ... // sumbu saja, tanda strip lebih halus pada sumbu
+> figure(10); plot2d("x^3-x",grid=9); ... // default, tanda strip sumbu kecil di dalamnya
+> figure(11); plot2d("x^3-x",grid=10); ...// tidak ada tanda strip, hanya sumbu
+> figure(0):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-075.png
+% Parameter <frame mematikan bingkai, dan framecolor=blue menetapkan
+% bingkai ke warna biru.
+% 
+% Jika Anda menginginkan tanda strip Anda sendiri, Anda dapat
+% menggunakan style=0, dan menambahkan semuanya nanti.
+>aspect(1.5); 
+>plot2d("x^3-x",grid=0); // plot
+>frame; xgrid([-1,0,1]); ygrid(0): // menambahkan frame dan grid
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-076.png
+% Untuk judul plot dan label sumbu, lihat contoh berikut.
+>plot2d("exp(x)",-1,1);
+>textcolor(black); // mengatur warna teks menjadi hitam
+>title(latex("y=e^x")); // judul di atas plot
+>xlabel(latex("x")); // "x" untuk sumbu x
+>ylabel(latex("y"),>vertical); // vertikal "y" untuk sumbu y
+>label(latex("(0,1)"),0,1,color=blue): // memberi label titik
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-077.png
+% Sumbu dapat digambar secara terpisah dengan xaxis() dan yaxis().
+>plot2d("x^3-x",<grid,<frame);
+>xaxis(0,xx=-2:1,style="->"); yaxis(0,yy=-5:5,style="->"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-078.png
+% Teks pada plot dapat diatur dengan label(). Pada contoh berikut ini,
+% "lc" berarti lower center. Ini mengatur posisi label relatif terhadap
+% koordinat plot.
+>function f(x) &= x^3-x
+
+                                 3
+                                x  - x
+
+>plot2d(f,-1,1,>square);
+>x0=fmin(f,0,1); // menghitung titik minimum
+>label("Rel. Min.",x0,f(x0),pos="lc"): // menambahkan label
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-079.png
+% Terdapat juga kotak teks.
+>plot2d(&f(x),-1,1,-2,2); // fungsi
+>plot2d(&diff(f(x),x),>add,style="--",color=red); // turunan
+>labelbox(["f","f'"],["-","--"],[black,red]): // kotak label
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-080.png
+>plot2d(["exp(x)","1+x"],color=[black,blue],style=["-","-.-"]):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-081.png
+>gridstyle("->",color=gray,textcolor=gray,framecolor=gray);  ...
+> plot2d("x^3-x",grid=1);   ...
+> settitle("y=x^3-x",color=black); ...
+> label("x",2,0,pos="bc",color=gray);  ...
+> label("y",0,6,pos="cl",color=gray); ...
+> reset():
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-082.png
+% Untuk kontrol yang lebih banyak lagi, sumbu x dan sumbu y dapat
+% dilakukan secara manual.
+% 
+% Perintah fullwindow() memperluas jendela plot karena kita tidak lagi
+% membutuhkan tempat untuk label di luar jendela plot. Gunakan
+% shrinkwindow() atau reset() untuk mengatur ulang ke default.
+>fullwindow; ...
+> gridstyle(color=darkgray,textcolor=darkgray); ...
+> plot2d(["2^x","1","2^(-x)"],a=-2,b=2,c=0,d=4,<grid,color=4:6,<frame); ...
+> xaxis(0,-2:1,style="->"); xaxis(0,2,"x",<axis); ...
+> yaxis(0,4,"y",style="->"); ...
+> yaxis(-2,1:4,>left); ...
+> yaxis(2,2^(-2:2),style=".",<left); ...
+> labelbox(["2^x","1","2^-x"],colors=4:6,x=0.8,y=0.2); ...
+> reset:
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-083.png
+% Berikut ini adalah contoh lain, di mana string Unicode digunakan dan
+% sumbu di luar area plot.
+>aspect(1.5); 
+>plot2d(["sin(x)","cos(x)"],0,2pi,color=[red,green],<grid,<frame); ...
+> xaxis(-1.1,(0:2)*pi,xt=["0",u"&pi;",u"2&pi;"],style="-",>ticks,>zero);  ...
+> xgrid((0:0.5:2)*pi,<ticks); ...
+> yaxis(-0.1*pi,-1:0.2:1,style="-",>zero,>grid); ...
+> labelbox(["sin","cos"],colors=[red,green],x=0.5,y=0.2,>left); ...
+> xlabel(u"&phi;"); ylabel(u"f(&phi;)"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-084.png
+% 
+% ---
+%% ** Contoh Soal
+%% Gambarkan plot dari fungsi-fungsi berikut:
+%% latex: 2x^2e^x, -2 \leq x \leq 2
+%% latex: e^{2x}, -2 \leq x \leq 2
+%% latex: xe^{-2x}, -2 \leq x \leq 2
+%% latex: e^{2x^2}, -2 \leq x \leq 2
+%% Penyelesaian:
+>reset();
+>aspect(4);
+>figure(1,4);...
+>figure(1); plot2d("2*x^2*exp(-x)",-2,2);...
+>figure(2); plot2d("exp(2*x)",-2,2);...
+>figure(3); plot2d("x*exp(-2*x)",-2,2);...
+>figure(4); plot2d("exp(2x^2)",-2,2);...
+>figure(0):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-085.png
+% * Memplot Data 2D
+% 
+% Jika x dan y adalah vektor data, data ini akan digunakan sebagai
+% koordinat x dan y dari sebuah kurva. Dalam hal ini, a, b, c, dan d,
+% atau radius r dapat ditentukan, atau jendela plot akan menyesuaikan
+% secara otomatis dengan data. Atau, >square dapat diatur untuk
+% mempertahankan rasio aspek persegi.
+% 
+% Memplot ekspresi hanyalah singkatan dari plot data. Untuk plot data,
+% Anda memerlukan satu atau lebih baris nilai x, dan satu atau lebih
+% baris nilai y. Dari rentang dan nilai x, fungsi plot2d akan menghitung
+% data untuk diplot, secara default dengan evaluasi adaptif dari fungsi
+% tersebut. Untuk plot titik, gunakan ">points", untuk garis dan titik
+% campuran gunakan ">addpoints".
+% 
+% Tetapi Anda dapat memasukkan data secara langsung.
+% 
+% - Gunakan vektor baris untuk x dan y untuk satu fungsi.
+%% - Matriks untuk x dan y diplot baris demi baris.
+% 
+% Berikut adalah contoh dengan satu baris untuk x dan y.
+>reset();
+>aspect(1.5)
+>x=-10:0.1:10; y=exp(-x^2)*x; plot2d(x,y):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-086.png
+% Data juga dapat diplot sebagai titik. Gunakan poin=true untuk ini.
+% Plot ini berfungsi seperti poligon, namun hanya menggambar
+% sudut-sudutnya saja.
+% 
+% - style = "...": Pilih dari "[]", "<>", "o", ".", "..", "+", "*",
+% "[]", "<>", "o", "..", "", "|".
+% 
+% Untuk memplot kumpulan titik, gunakan >titik. Jika warna adalah vektor
+% warna, setiap titik mendapatkan warna yang berbeda. Untuk matriks
+% koordinat dan vektor kolom, warna berlaku untuk baris matriks. 
+%% Parameter >addpoints menambahkan titik ke segmen garis untuk plot
+% data.
+>xdata=[1,1.5,2.5,3,4]; ydata=[3,3.1,2.8,2.9,2.7]; // data
+>plot2d(xdata,ydata,a=0.5,b=4.5,c=2.5,d=3.5,style="."); // garis
+>plot2d(xdata,ydata,>points,>add,style="o"): // menambahkan titik
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-087.png
+>p=polyfit(xdata,ydata,1); // mendapatkan garis regresi
+>plot2d("polyval(p,x)",>add,color=red): // menambahkan plot garis
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-088.png
+>reset();
+% ---
+%% ** Contoh Soal
+%% Diberikan data:
+%% r = 2.5, 3.5, 4.5, 5.5, 6
+%% s = 3.2, 3.3, 2.8, 2.9, 2.7
+%% Buatlah plot data di atas dan tambahkan garis regresinya!
+%% Penyelesaian:
+>reset(); aspect(1.5);
+>rdata=[2.5,3.5,4.5,5.5,6]; sdata=[3.2,3.3,2.8,2.9,2.7]; // mendefinisikan data r dan data s
+>plot2d(rdata,sdata,a=2,b=6.5,c=2.5,d=3.5,style=".-",color=blue); // membuat plot data
+>plot2d(rdata,sdata,>points,>add,style="<>",color=red): // menambahkan poin di setiap titik s
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-089.png
+% Menambahkan garis segresi
+>p=polyfit(rdata,sdata,1);
+>plot2d("polyval(p,x)",>add,color=orange):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-090.png
+% 
+% * Menggambar Daerah Yang Dibatasi Kurva
+% 
+% Plot data benar-benar berupa poligon. Kita juga dapat memplot kurva
+% atau kurva terisi.
+% 
+% - filled=true mengisi plot.
+%% - style = "...": Pilih dari "", "/", "\", "\/".
+%% - fillcolor: Lihat di atas untuk warna yang tersedia.
+% 
+% Warna isian ditentukan oleh argumen "fillcolor", dan pada opsional
+% <outline mencegah menggambar garis batas untuk semua gaya kecuali yang
+% default.
+>t=linspace(0,2pi,1000); // parameter untuk kurva
+>x=sin(t)*exp(t/pi); y=cos(t)*exp(t/pi); // x(t) and y(t)
+>figure(1,2); aspect(16/9)
+>figure(1); plot2d(x,y,r=10); // plot kurva
+>figure(2); plot2d(x,y,r=10,>filled,style="/",fillcolor=red); // mengisi kurva
+>figure(0):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-091.png
+% Pada contoh berikut ini, kita memplot elips yang terisi dan dua segi
+% enam yang terisi menggunakan kurva tertutup dengan 6 titik dengan gaya
+% isian yang berbeda.
+>x=linspace(0,2pi,1000); plot2d(sin(x),cos(x)*0.5,r=1,>filled,style="/"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-092.png
+>t=linspace(0,2pi,6); ...
+>plot2d(cos(t),sin(t),>filled,style="/",fillcolor=red,r=1.5):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-093.png
+>t=linspace(0,2pi,6); plot2d(cos(t),sin(t),>filled,style="#"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-094.png
+% Contoh lainnya adalah septagon, yang kita buat dengan 7 titik pada
+% lingkaran satuan.
+>t=linspace(0,2pi,7);  ...
+> plot2d(cos(t),sin(t),r=1,>filled,style="/",fillcolor=red):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-095.png
+% Berikut ini adalah himpunan nilai maksimal dari empat kondisi linier
+% yang kurang dari atau sama dengan 3. Ini adalah A[k].v<=3 untuk semua
+% barisan A. Untuk mendapatkan sudut-sudut yang bagus, kita menggunakan
+% n yang relatif besar.
+>A=[2,1;1,2;-1,0;0,-1];
+>function f(x,y) := max([x,y].A');
+>plot2d("f",r=4,level=[0;3],color=green,n=1000):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-096.png
+% Poin utama dari bahasa matriks adalah bahwa bahasa ini memungkinkan
+% untuk menghasilkan tabel fungsi dengan mudah.
+>t=linspace(0,2pi,1000); x=cos(3*t); y=sin(4*t);
+% Kita sekarang memiliki vektor nilai x dan y. plot2d() dapat memplot
+% nilai-nilai ini sebagai sebuah kurva yang menghubungkan titik-titik.
+% Plot dapat diisi. Dalam kasus ini, hal ini memberikan hasil yang bagus
+% karena aturan penggulungan, yang digunakan untuk isi.
+>plot2d(x,y,<grid,<frame,>filled):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-097.png
+% 
+% Vektor interval diplot terhadap nilai x sebagai wilayah yang terisi
+% antara nilai bawah dan atas interval.
+% 
+% Hal ini dapat berguna untuk memplot kesalahan perhitungan. Tetapi juga
+% dapat digunakan untuk memplot kesalahan statistik.
+>t=linspace(0,2pi,1000); x=cos(3*t); y=sin(4*t);
+>plot2d(y,x,<grid,<frame,>filled):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-098.png
+% Apabila plotnya di balik, fungsi y terlebih dahulu kemudian fungsi x,
+% maka tebentuk seperti grafik diatas. Yang membedakan adalah, banyak
+% isian warna hijau menjadi 4 ke bawah karena fungsi y=sin(4*t) dan 3 ke
+% samping karena fungsi x=cos(3*t). Sehingga koefisien t pada fungsi
+% pertama akan memberikan banyak isian warna hijau ke bawah, sementara
+% fungsi kedua memberikan bawah isian hijau ke samping.
+% 
+% Apabila fungsi x dan y sudutnya sama, maka terbentuk ellips.
+>t=linspace(0,2pi,1000); x=cos(2*t); y=sin(2*t);
+>plot2d(y,x,<grid,<frame,>filled):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-099.png
+>t=0:0.1:1; ...
+> plot2d(t,interval(t-random(size(t)),t+random(size(t))),style="|");  ...
+> plot2d(t,t,add=true):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-100.png
+% Jika x adalah vektor yang diurutkan, dan y adalah vektor interval,
+% maka plot2d akan memplot rentang interval yang terisi di bidang, gaya
+% isian sama dengan gaya poligon.
+>t=-1:0.01:1; x=~t-0.01,t+0.01~; y=x^3-x;
+>plot2d(t,y):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-101.png
+% 
+% Dimungkinkan untuk mengisi wilayah nilai untuk fungsi tertentu. Untuk
+% ini, level harus berupa matriks 2xn. Baris pertama adalah batas bawah
+% dan baris kedua berisi batas atas.
+>expr := "2*x^2+x*y+3*y^4+y"; // define an expression f(x,y)
+>plot2d("cos(x)","sin(x)^3",xmin=0,xmax=2pi,>filled,style="/"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-102.png
+% Kita juga dapat mengisi rentang nilai seperti
+% 
+% latex: -1 \le (x^2+y^2)^2-x^2+y^2 \le 0.
+% 
+>plot2d("(x^2+y^2)^2-x^2+y^2",r=1.2,level=[-1;0],style="/"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-103.png
+>plot2d("cos(x+1)","sin(2*x)^3",xmin=0,xmax=2pi,>filled,style="/"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-104.png
+>plot2d("cos(x)","sin(2*x)^3",xmin=0,xmax=2pi,>filled):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-105.png
+>plot2d("cos(-3*x)","sin(2*x)^3",xmin=0,xmax=2pi,>filled,fillcolor=blue, style="#"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-106.png
+% 
+% ---
+%% ** Contoh Soal
+%% Buatkan beberapa polygon berikut:
+%% a) segi lima
+%% b) segi delapan
+%% c) lingkaran
+% 
+% Penyelesaian:
+%% a) segi lima
+>reset();
+>t=linspace(0,2pi,5);
+>plot2d(cos(t),sin(t),r=1,>filled,style="/",fillcolor=red,grid=0); insimg(20)
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-107.png
+% b) segi delapan
+>t=linspace(0,2pi,8);
+>plot2d(cos(t),sin(t),r=1,>filled,style="/",fillcolor=olive,grid=0); insimg(20)
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-108.png
+% c) lingkaran
+>t=linspace(0,2pi,1000);
+>plot2d(cos(t),sin(t),r=1,>filled,style="/",fillcolor=blue,grid=0):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-109.png
+% Membuat lingkaran dapat menggunakan linspace dengan banyak titik 1000
+% karena semakin banyak sisi yang terhubung semakin tidak terlihat
+% sudutnya dan akan terbentuk lingkaran.
+>
+% 
+% * Grafik Fungsi Parametrik
+% 
+% Nilai x tidak perlu diurutkan. (x,y) hanya menggambarkan sebuah kurva.
+% Jika x diurutkan, kurva tersebut adalah grafik dari sebuah fungsi.
+% 
+% Dalam contoh berikut, kita memplot spiral
+% 
+% latex: \gamma(t) = t \cdot (\cos(2\pi t),\sin(2\pi t))
+% 
+% Kita perlu menggunakan sangat banyak titik untuk tampilan yang halus
+% atau fungsi adaptive() untuk mengevaluasi ekspresi (lihat fungsi
+% adaptive() untuk lebih jelasnya).
+>t=linspace(0,1,1000); ...
+>plot2d(t*cos(2*pi*t),t*sin(2*pi*t),r=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-110.png
+% Sebagai alternatif, Anda dapat menggunakan dua ekspresi untuk kurva.
+% Berikut ini adalah plot kurva yang sama seperti di atas.
+>plot2d("x*cos(2*pi*x)","x*sin(2*pi*x)",xmin=0,xmax=1,r=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-111.png
+>t=linspace(0,1,1000); r=exp(-t); x=r*cos(2pi*t); y=r*sin(2pi*t);
+>plot2d(x,y,r=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-112.png
+% Dalam contoh berikut, kita memplot
+% 
+% latex: \gamma(t) = (r(t) \cos(t), r(t) \sin(t))
+% 
+% dengan
+% 
+% latex: r(t) = 1 + \dfrac{\sin(3t)}{2}.
+>t=linspace(0,2pi,1000); r=1+sin(3*t)/2; x=r*cos(t); y=r*sin(t); ...
+>plot2d(x,y,>filled,fillcolor=red,style="/",r=1.5):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-113.png
+% ---
+%% ** Contoh Soal
+%% Buatlah plot spiral beberapa putaran dengan r=exp(-t) dan kemiringan 1
+%% Penyelesaian:
+>t=linspace(0,5,1000); r=exp(-t); x=r*cos(2pi*3*t); y=r*sin(2pi*3*t);
+>plot2d(x,y,r=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-114.png
+% Karena spiral dibuat dengan kemiringan 1, maka x ditambahkan 1,
+% menjadi x=r*cos(2pi*3*t+1)
+>t=linspace(0,5,1000); r=exp(-t); x=r*cos(2pi*3*t+1); y=r*sin(2pi*3*t);
+>plot2d(x,y,r=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-115.png
+% * Menggambar Grafik Bilangan Kompleks
+% 
+% Larik bilangan kompleks juga dapat diplot. Kemudian titik-titik kisi
+% akan dihubungkan. Jika sejumlah garis kisi ditentukan (atau vektor 1x2
+% garis kisi) pada argumen cgrid, hanya garis-garis kisi tersebut yang
+% akan terlihat.
+% 
+% Matriks bilangan kompleks akan secara otomatis diplot sebagai
+% kisi-kisi pada bidang kompleks.
+% 
+% Pada contoh berikut, kami memplot gambar lingkaran satuan di bawah
+% fungsi eksponensial. Parameter cgrid menyembunyikan beberapa kurva
+% kisi-kisi.
+>aspect(); r=linspace(0,1,50); a=linspace(0,2pi,80)'; z=r*exp(I*a);...
+>plot2d(z,a=-1.25,b=1.25,c=-1.25,d=1.25,cgrid=10,color=blue):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-116.png
+>aspect(1.25); r=linspace(0,1,50); a=linspace(0,2pi,200)'; z=r*exp(I*a);
+>plot2d(exp(z),cgrid=[40,10]):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-117.png
+>r=linspace(0,1,10); a=linspace(0,2pi,40)'; z=r*exp(I*a);
+>plot2d(exp(z),>points,>add):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-118.png
+% Vektor bilangan kompleks secara otomatis diplot sebagai kurva pada
+% bidang kompleks dengan bagian riil dan bagian imajiner.
+% 
+% Dalam contoh, kami memplot lingkaran satuan dengan
+% 
+% latex: \gamma(t) = e^{it}
+>t=linspace(0,2pi,1000); ...
+>plot2d(exp(I*t)+exp(4*I*t),r=2):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-119.png
+>
+% * Plot Statistik
+% 
+% Terdapat banyak fungsi yang dikhususkan pada plot statistik. Salah
+% satu plot yang sering digunakan adalah plot kolom.
+% 
+% Jumlah kumulatif dari nilai berdistribusi normal 0-1 menghasilkan
+% jalan acak.
+>plot2d(cumsum(randnormal(1,1000))):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-120.png
+% Dengan menggunakan dua baris, ini menunjukkan jalan dalam dua dimensi.
+>X=cumsum(randnormal(2,1000)); plot2d(X[1],X[2]):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-121.png
+>columnsplot(cumsum(random(10)),style="/",color=blue):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-122.png
+% Ini juga dapat menampilkan string sebagai label.
+>months=["Jan","Feb","Mar","Apr","May","Jun", ...
+>  "Jul","Aug","Sep","Oct","Nov","Dec"];
+>values=[10,12,12,18,22,28,30,26,22,18,12,8];
+>columnsplot(values,lab=months,color=red,style="-");
+>title("Temperature"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-123.png
+>k=0:10;
+>plot2d(k,bin(10,k),>bar):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-124.png
+>plot2d(k,bin(10,k)); plot2d(k,bin(10,k),>points,>add):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-125.png
+>plot2d(normal(1000),normal(1000),>points,grid=6,style=".."):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-126.png
+>plot2d(normal(1,1000),>distribution,style="O"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-127.png
+>plot2d("qnormal",0,5;2.5,0.5,>filled):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-128.png
+% Untuk memplot distribusi statistik eksperimental, Anda dapat
+% menggunakan distribution=n dengan plot2d.
+>w=randexponential(1,1000); // distribusi eksponensial
+>plot2d(w,>distribution): // atau distribusi=n dengan n interval
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-129.png
+% Atau Anda dapat menghitung distribusi dari data dan memplot hasilnya
+% dengan >bar di plot3d, atau dengan plot kolom.
+>w=normal(1000); // 0-1-normal distribution
+>{x,y}=histo(w,10,v=[-6,-4,-2,-1,0,1,2,4,6]); // batas-batas interval v
+>plot2d(x,y,>bar):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-130.png
+% Fungsi statplot() menetapkan gaya dengan string sederhana.
+>statplot(1:10,cumsum(random(10)),"b"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-131.png
+>n=10; i=0:n; ...
+>plot2d(i,bin(n,i)/2^n,a=0,b=10,c=0,d=0.3); ...
+>plot2d(i,bin(n,i)/2^n,points=true,style="ow",add=true,color=blue):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-132.png
+% Selain itu, data dapat diplot sebagai diagram batang. Dalam hal ini, x
+% harus diurutkan dan satu elemen lebih panjang dari y. Diagram batang
+% akan memanjang dari x[i] ke x[i+1] dengan nilai y[i]. Jika x memiliki
+% ukuran yang sama dengan y, maka x akan diperpanjang satu elemen dengan
+% jarak terakhir.
+% 
+% Gaya isian dapat digunakan seperti di atas.
+>n=10; k=bin(n,0:n); ...
+>plot2d(-0.5:n+0.5,k,bar=true,fillcolor=lightgray):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-133.png
+% Data untuk plot batang (bar=1) dan histogram (histogram = 1) dapat
+% diberikan secara eksplisit dalam xv dan yv, atau dapat dihitung dari
+% distribusi empiris dalam xv dengan >distribution (atau
+% distribution=n). Histogram dari nilai xv akan dihitung secara otomatis
+% dengan >histogram. Jika >even ditentukan, nilai xv akan dihitung dalam
+% interval bilangan bulat.
+>plot2d(normal(10000),distribution=50):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-134.png
+>k=0:10; m=bin(10,k); x=(0:11)-0.5; plot2d(x,m,>bar):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-135.png
+>columnsplot(m,k):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-136.png
+>plot2d(random(600)*6,histogram=6):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-137.png
+% Untuk distribusi, ada parameter distribution=n, yang menghitung nilai
+% secara otomatis dan mencetak distribusi relatif dengan n sub-interval.
+>plot2d(normal(1,1000),distribution=10,style="\/"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-138.png
+% Dengan parameter even=true, ini akan menggunakan interval bilangan
+% bulat.
+>plot2d(intrandom(1,1000,10),distribution=10,even=true):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-139.png
+% Perhatikan bahwa ada banyak plot statistik yang mungkin berguna.
+% Lihatlah tutorial tentang statistik.
+>columnsplot(getmultiplicities(1:6,intrandom(1,6000,6))):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-140.png
+>plot2d(normal(1,1000),>distribution); ...
+>  plot2d("qnormal(x)",color=red,thickness=2,>add):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-141.png
+% Ada juga banyak plot khusus untuk statistik. Boxplot menunjukkan
+% kuartil dari distribusi ini dan banyak pencilan. Menurut definisi,
+% pencilan dalam boxplot adalah data yang melebihi 1,5 kali kisaran 50%
+% tengah plot.
+>M=normal(5,1000); boxplot(quartiles(M)):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-142.png
+% ---
+%% ** Contoh Soal
+%% Diketahui penjualan buku perbulan tahun 2022 dari Januari hingga
+% Desember berturut 8,11,15,18,20,27,30,28,22,18,12,10. Buatlah diagram
+% batang penjualan buku dan hitung rata-rata penjualan tiap bulannya.
+%% Penyelesaian:
+>bulan=["Jan","Feb","Mar","Apr","Mai","Jun", ...
+>"Jul","Ags","Sep","Okt","Nov","Des"];
+>values=[14,15,14,18,24,28,30,28,24,28,23,20];
+>columnsplot(values,lab=bulan,color=green,style="/");
+>title("Penjualan Buku Tahun 2022"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-143.png
+% Menghitung rata-rata penjualan buku tiap bulan
+>sum(values)/12
+22.1666666667
+% 
+% * Fungsi Implisit
+% 
+% Plot implisit menunjukkan garis level yang menyelesaikan f(x,y)=level,
+% di mana "level" dapat berupa nilai tunggal atau vektor nilai. Jika
+% level="auto", akan ada nc garis level, yang akan menyebar di antara
+% nilai
+%% minimum dan maksimum fungsi secara merata. Warna yang lebih gelap atau
+% lebih terang dapat ditambahkan dengan >hue untuk mengindikasikan nilai
+% fungsi. Untuk fungsi implisit, xv haruslah sebuah fungsi atau ekspresi
+% dari parameter x dan y, atau, sebagai alternatif, xv dapat berupa
+% sebuah matriks nilai.
+% 
+% Euler dapat menandai garis level
+% 
+% latex: f(x,y) = c
+% 
+% dari fungsi apapun.
+% 
+% Untuk menggambar himpunan f(x,y)=c dengan satu atau lebih konstanta c,
+% Anda dapat menggunakan plot2d() dengan plot implisitnya pada bidang.
+% Parameter untuk c adalah level = c, di mana c dapat berupa vektor
+% garis level. Sebagai tambahan, sebuah skema warna dapat digambar pada
+% latar belakang untuk mengindikasikan nilai fungsi untuk setiap titik
+% pada plot. Parameter "n" menentukan kehalusan plot.
+>aspect(1.5); 
+>plot2d("x^2+y^2-x*y-x",r=1.5,level=0,contourcolor=red):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-144.png
+>expr := "2*x^2+x*y+3*y^4+y"; // mendefinisikan sebuah ekspresi f(x,y)
+>plot2d(expr,level=0): // Solusi dari f(x,y)=0
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-145.png
+>plot2d(expr,level=0:0.5:20,>hue,contourcolor=white,n=200): // yang ini baik
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-146.png
+>plot2d(expr,level=0:0.5:20,>hue,>spectral,n=200,grid=4): // ini lebih baik
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-147.png
+% Hal ini juga berlaku untuk plot data. Tetapi Anda harus menentukan
+% rentang untuk label sumbu.
+>x=-2:0.05:1; y=x'; z=expr(x,y);
+>plot2d(z,level=0,a=-1,b=2,c=-2,d=1,>hue):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-148.png
+>plot2d("x^3-y^2",>contour,>hue,>spectral):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-149.png
+>plot2d("x^3-y^2",level=0,contourwidth=3,>add,contourcolor=red):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-150.png
+>z=z+normal(size(z))*0.2;
+>plot2d(z,level=0.5,a=-1,b=2,c=-2,d=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-151.png
+>plot2d(expr,level=[0:0.2:5;0.05:0.2:5.05],color=lightgray):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-152.png
+>plot2d("x^2+y^3+x*y",level=1,r=4,n=100):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-153.png
+>plot2d("x^2+2*y^2-x*y",level=0:0.1:10,n=100,contourcolor=white,>hue):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-154.png
+% Hal ini juga memungkinkan untuk mengisi set
+% 
+% latex: a \le f(x,y) \le b
+% 
+% dengan rentang level
+% 
+% Hal ini memungkinkan untuk mengisi daerah nilai untuk fungsi tertentu.
+% Untuk ini, level harus berupa matriks 2xn. Baris pertama adalah batas
+% bawah dan baris kedua berisi batas atas.
+>plot2d(expr,level=[0;1],style="-",color=blue): // 0 <= f(x,y) <= 1
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-155.png
+% 
+% Plot implisit juga dapat menunjukkan rentang level. Maka level harus
+% berupa matriks 2xn interval level, di mana baris pertama berisi awal
+% dan baris kedua adalah akhir dari setiap interval. Sebagai alternatif,
+% vektor baris sederhana dapat digunakan untuk level, dan parameter dl
+% memperluas nilai level ke interval.
+>plot2d("x^4+y^4",r=1.5,level=[0;1],color=blue,style="/"):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-156.png
+>plot2d("x^2+y^3+x*y",level=[0,2,4;1,3,5],style="/",r=2,n=100):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-157.png
+>plot2d("x^2+y^3+x*y",level=-10:20,r=2,style="-",dl=0.1,n=100):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-158.png
+>plot2d("sin(x)*cos(y)",r=pi,>hue,>levels,n=100):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-159.png
+% Anda juga dapat menandai sebuah daerah
+% 
+% latex: a \le f(x,y) \le b.
+% 
+% Hal ini dilakukan dengan menambahkan level dengan dua baris.
+>plot2d("(x^2+y^2-1)^3-x^2*y^3",r=1.3, ...
+>  style="#",color=red,<outline, ...
+>  level=[-2;0],n=100):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-160.png
+% 
+% Dimungkinkan untuk menentukan level tertentu. Misalnya, kita dapat
+% memplot solusi dari persamaan seperti
+% 
+% latex: x^3-xy+x^2y^2=6
+>plot2d("x^3-x*y+x^2*y^2",r=6,level=1,n=100):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-161.png
+>function starplot1 (v, style="/", color=green, lab=none) ...
+$  if !holding() then clg; endif;
+$  w=window(); window(0,0,1024,1024);
+$  h=holding(1);
+$  r=max(abs(v))*1.2;
+$  setplot(-r,r,-r,r);
+$  n=cols(v); t=linspace(0,2pi,n);
+$  v=v|v[1]; c=v*cos(t); s=v*sin(t);
+$  cl=barcolor(color); st=barstyle(style);
+$  loop 1 to n
+$    polygon([0,c[#],c[#+1]],[0,s[#],s[#+1]],1);
+$    if lab!=none then
+$      rlab=v[#]+r*0.1;
+$      {col,row}=toscreen(cos(t[#])*rlab,sin(t[#])*rlab);
+$      ctext(""+lab[#],col,row-textheight()/2);
+$    endif;
+$  end;
+$  barcolor(cl); barstyle(st);
+$  holding(h);
+$  window(w);
+$endfunction
+% Tidak ada kisi-kisi atau strip sumbu di sini. Selain itu, kami
+% menggunakan jendela penuh untuk plot.
+% 
+% Kita memanggil reset sebelum menguji plot ini untuk mengembalikan
+% default grafis. Hal ini tidak perlu dilakukan jika Anda yakin bahwa
+% plot tetap bekerja.
+>reset; starplot1(normal(1,10)+5,color=red,lab=1:10):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-162.png
+% Sometimes, you may want to plot something that plot2d cannot do, but almost.
+% 
+% In the following function, we do a logarithmic impulse plot. plot2d can do logarithmic
+% plots, but not for impulse bars.
+>function logimpulseplot1 (x,y) ...
+$  {x0,y0}=makeimpulse(x,log(y)/log(10));
+$  plot2d(x0,y0,>bar,grid=0);
+$  h=holding(1);
+$  frame();
+$  xgrid(ticks(x));
+$  p=plot();
+$  for i=-10 to 10;
+$    if i<=p[4] and i>=p[3] then
+$       ygrid(i,yt="10^"+i);
+$    endif;
+$  end;
+$  holding(h);
+$endfunction
+% Mari kita uji dengan nilai yang terdistribusi secara eksponensial.
+>aspect(1.5); x=1:10; y=-log(random(size(x)))*200; ...
+>logimpulseplot1(x,y):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-163.png
+% Mari kita membuat kurva 2D dengan menggunakan plot langsung. Perintah
+% plot(x,y) hanya memplot kurva ke dalam jendela plot. setplot(a,b,c,d)
+% mengatur jendela ini.
+% 
+% Fungsi wait(0) memaksa plot untuk muncul pada jendela grafis. Kalau
+% tidak, penggambaran ulang dilakukan dalam interval waktu yang jarang.
+>function animliss (n,m) ...
+$t=linspace(0,2pi,500);
+$f=0;
+$c=framecolor(0);
+$l=linewidth(2);
+$setplot(-1,1,-1,1);
+$repeat
+$  clg;
+$  plot(sin(n*t),cos(m*t+f));
+$  wait(0);
+$  if testkey() then break; endif;
+$  f=f+0.02;
+$end;
+$framecolor(c);
+$linewidth(l);
+$endfunction
+% Tekan sembarang tombol untuk menghentikan animasi ini.
+>animliss(2,3); // lihat hasilnya, jika sudah puas, tekan ENTER
+% 
+>reset();
+>plot2d("x^2+y^4+x*y",level=-10:20,r=2,style="-",dl=0.1,n=100):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-164.png
+>plot2d("x^5+y^8",>contour,>hue,>spectral):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-165.png
+% 
+% * Plot Logaritmik
+% EMT menggunakan parameter "logplot" untuk skala logaritmik. Plot
+% logaritmik dapat diplot menggunakan skala logaritmik dalam y dengan
+% logplot = 1, atau menggunakan skala logaritmik dalam x dan y dengan
+% logplot = 2, atau dalam x dengan logplot = 3.
+% 
+%  - logplot=1: y-logarithmic
+%%  - logplot=2: x-y-logarithmic
+%%  - logplot=3: x-logarithmic
+>plot2d("exp(x^3-x)*x^2",1,5,logplot=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-166.png
+>plot2d("exp(x+sin(x))",0,100,logplot=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-167.png
+% Untuk logplot=1, rentang sumbu y akan dituliskan dalam bentuk 10
+% pangkat n.
+>plot2d("exp(x+sin(x))",10,100,logplot=2):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-168.png
+% Untuk logplot=2, rentang sumbu x dan y akan dituliskan dalam bentuk 10
+% pangkat n.
+>plot2d("gamma(x)",1,10,logplot=1):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-169.png
+>plot2d("log(x*(2+sin(x/100)))",10,1000,logplot=3):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-170.png
+% Sementara logplot=3, rentang sumbu x akan dituliskan dalam bentuk 10
+% pangkat n.
+% 
+% Hal ini juga berlaku pada plot data.
+>x=10^(1:20); y=x^2-x;
+>plot2d(x,y,logplot=2):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-171.png
+% ---
+%% ** Contoh Soal
+%% Buatlah plot fungsi logaritmik berikut
+%% latex: f(x)=log(x(2+sin(x))
+%% Penyelesaian:
+>function f(x) &= log(x*(2+sin(x)));
+>aspect(2); plot2d(&f(x),10,100,logplot=3):
+ %image% EMT4Plot2D_Nasywa Azizah Luthfia Hardanis_22305141051-172.png
+% Plot diatas menggunakan logplot=3 untuk mengubah rentang sumbu x dalam
+% bentuk 10 pangkat n.
+% 
+>
+>
+>
+% * Rujukan Lengkap Fungsi plot2d()
+% 
+%%   function plot2d (xv, yv, btest, a, b, c, d, xmin, xmax, r, n,  ..
+%%   logplot, grid, frame, framecolor, square, color, thickness, style, ..
+%%   auto, add, user, delta, points, addpoints, pointstyle, bar, histogram,  ..
+%%   distribution, even, steps, own, adaptive, hue, level, contour,  ..
+%%   nc, filled, fillcolor, outline, title, xl, yl, maps, contourcolor, ..
+%%   contourwidth, ticks, margin, clipping, cx, cy, insimg, spectral,  ..
+%%   cgrid, vertical, smaller, dl, niveau, levels)
+% 
+% Multipurpose plot function for plots in the plane (2D plots). This function can do
+% plots of functions of one variables, data plots, curves in the plane, bar plots, grids
+% of complex numbers, and implicit plots of functions of two variables.
+% 
+% Parameters
+% 
+%% x,y       : equations, functions or data vectors
+%% a,b,c,d   : Plot area (default a=-2,b=2)
+%% r         : if r is set, then a=cx-r, b=cx+r, c=cy-r, d=cy+r
+%%             r can be a vector [rx,ry] or a vector [rx1,rx2,ry1,ry2].
+%% xmin,xmax : range of the parameter for curves
+%% auto      : Determine y-range automatically (default)
+%% square    : if true, try to keep square x-y-ranges
+%% n         : number of intervals (default is adaptive)
+%% grid      : 0 = no grid and labels,
+%%             1 = axis only,
+%%             2 = normal grid (see below for the number of grid lines)
+%%             3 = inside axis
+%%             4 = no grid
+%%             5 = full grid including margin
+%%             6 = ticks at the frame
+%%             7 = axis only
+%%             8 = axis only, sub-ticks
+%% frame     : 0 = no frame
+%% framecolor: color of the frame and the grid
+%% margin    : number between 0 and 0.4 for the margin around the plot
+%% color     : Color of curves. If this is a vector of colors,
+%%             it will be used for each row of a matrix of plots. In the case of
+%%             point plots, it should be a column vector. If a row vector or a
+%%             full matrix of colors is used for point plots, it will be used for
+%%             each data point.
+%% thickness : line thickness for curves
+%%             This value can be smaller than 1 for very thin lines.
+%% style     : Plot style for lines, markers, and fills.
+%%             For points use
+%%             "[]", "<>", ".", "..", "...",
+%%             "*", "+", "|", "-", "o"
+%%             "[]#", "<>#", "o#" (filled shapes)
+%%             "[]w", "<>w", "ow" (non-transparent)
+%%             For lines use
+%%             "-", "--", "-.", ".", ".-.", "-.-", "->"
+%%             For filled polygons or bar plots use
+%%             "#", "#O", "O", "/", "\", "\/",
+%%             "+", "|", "-", "t"
+%% points    : plot single points instead of line segments
+%% addpoints : if true, plots line segments and points
+%% add       : add the plot to the existing plot
+%% user      : enable user interaction for functions
+%% delta     : step size for user interaction
+%% bar       : bar plot (x are the interval bounds, y the interval values)
+%% histogram : plots the frequencies of x in n subintervals
+%% distribution=n : plots the distribution of x with n subintervals
+%% even      : use inter values for automatic histograms.
+%% steps     : plots the function as a step function (steps=1,2)
+%% adaptive  : use adaptive plots (n is the minimal number of steps)
+%% level     : plot level lines of an implicit function of two variables
+%% outline   : draws boundary of level ranges.
+% 
+%% If the level value is a 2xn matrix, ranges of levels will be drawn
+%% in the color using the given fill style. If outline is true, it
+%% will be drawn in the contour color. Using this feature, regions of
+%% f(x,y) between limits can be marked.
+% 
+%% hue       : add hue color to the level plot to indicate the function
+%%             value
+%% contour   : Use level plot with automatic levels
+%% nc        : number of automatic level lines
+%% title     : plot title (default "")
+%% xl, yl    : labels for the x- and y-axis
+%% smaller   : if >0, there will be more space to the left for labels.
+%% vertical  :
+%%   Turns vertical labels on or off. This changes the global variable
+%%   verticallabels locally for one plot. The value 1 sets only vertical
+%%   text, the value 2 uses vertical numerical labels on the y axis.
+%% filled    : fill the plot of a curve
+%% fillcolor : fill color for bar and filled curves
+%% outline   : boundary for filled polygons
+%% logplot   : set logarithmic plots
+%%             1 = logplot in y,
+%%             2 = logplot in xy,
+%%             3 = logplot in x
+%% own       :
+%%   A string, which points to an own plot routine. With >user, you get
+%%   the same user interaction as in plot2d. The range will be set
+%%   before each call to your function.
+%% maps      : map expressions (0 is faster), functions are always mapped.
+%% contourcolor : color of contour lines
+%% contourwidth : width of contour lines
+%% clipping  : toggles the clipping (default is true)
+%% title     :
+%%   This can be used to describe the plot. The title will appear above
+%%   the plot. Moreover, a label for the x and y axis can be added with
+%%   xl="string" or yl="string". Other labels can be added with the
+%%   functions label() or labelbox(). The title can be a unicode
+%%   string or an image of a Latex formula.
+%% cgrid     :
+%%   Determines the number of grid lines for plots of complex grids.
+%%   Should be a divisor of the the matrix size minus 1 (number of
+%%   subintervals). cgrid can be a vector [cx,cy].
+% 
+% Overview
+% 
+% The function can plot
+% 
+% - expressions, call collections or functions of one variable,
+%% - parametric curves,
+%% - x data against y data,
+%% - implicit functions,
+%% - bar plots,
+%% - complex grids,
+%% - polygons.
+% 
+% If a function or expression for xv is given, plot2d() will compute
+%% values in the given range using the function or expression. The
+%% expression must be an expression in the variable x. The range must
+%% be defined in the parameters a and b unless the default range
+%% [-2,2] should be used. The y-range will be computed automatically,
+%% unless c and d are specified, or a radius r, which yields the range
+%% [-r,r] for x and y. For plots of functions, plot2d will use an
+%% adaptive evaluation of the function by default. To speed up the
+%% plot for complicated functions, switch this off with <adaptive, and
+%% optionally decrease the number of intervals n. Moreover, plot2d()
+%% will by default use mapping. I.e., it will compute the plot element
+%% for element. If your expression or your functions can handle a
+%% vector x, you can switch that off with <maps for faster evaluation.
+% 
+% Note that adaptive plots are always computed element for element. 
+%% If functions or expressions for both xv and for yv are specified,
+%% plot2d() will compute a curve with the xv values as x-coordinates
+%% and the yv values as y-coordinates. In this case, a range should be
+%% defined for the parameter using xmin, xmax. Expressions contained
+%% in strings must always be expressions in the parameter variable x.
